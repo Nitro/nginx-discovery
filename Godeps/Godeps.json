@@ -1,0 +1,158 @@
+{
+	"ImportPath": "github.com/Nitro/nginx-raster-discovery",
+	"GoVersion": "go1.8",
+	"GodepVersion": "v79",
+	"Deps": [
+		{
+			"ImportPath": "github.com/Nitro/sidecar/output",
+			"Comment": "v1.2.0-44-g16dff57",
+			"Rev": "16dff572a499f00424cb8f56c98859ed753034c2"
+		},
+		{
+			"ImportPath": "github.com/Nitro/sidecar/service",
+			"Comment": "v1.2.0-44-g16dff57",
+			"Rev": "16dff572a499f00424cb8f56c98859ed753034c2"
+		},
+		{
+			"ImportPath": "github.com/Sirupsen/logrus",
+			"Comment": "1.0.2-34-g181d419",
+			"Rev": "181d419aa9e2223811b824e8f0b4af96f9ba9302"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/opts",
+			"Comment": "v1.4.1-12113-g16e6211",
+			"Rev": "16e6211cf7ffcdaae11e4ded61d0e15b52c1c8a4"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/pkg/archive",
+			"Comment": "v1.4.1-12113-g16e6211",
+			"Rev": "16e6211cf7ffcdaae11e4ded61d0e15b52c1c8a4"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/pkg/fileutils",
+			"Comment": "v1.4.1-12113-g16e6211",
+			"Rev": "16e6211cf7ffcdaae11e4ded61d0e15b52c1c8a4"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/pkg/homedir",
+			"Comment": "v1.4.1-12113-g16e6211",
+			"Rev": "16e6211cf7ffcdaae11e4ded61d0e15b52c1c8a4"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/pkg/idtools",
+			"Comment": "v1.4.1-12113-g16e6211",
+			"Rev": "16e6211cf7ffcdaae11e4ded61d0e15b52c1c8a4"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/pkg/ioutils",
+			"Comment": "v1.4.1-12113-g16e6211",
+			"Rev": "16e6211cf7ffcdaae11e4ded61d0e15b52c1c8a4"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/pkg/longpath",
+			"Comment": "v1.4.1-12113-g16e6211",
+			"Rev": "16e6211cf7ffcdaae11e4ded61d0e15b52c1c8a4"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/pkg/pools",
+			"Comment": "v1.4.1-12113-g16e6211",
+			"Rev": "16e6211cf7ffcdaae11e4ded61d0e15b52c1c8a4"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/pkg/promise",
+			"Comment": "v1.4.1-12113-g16e6211",
+			"Rev": "16e6211cf7ffcdaae11e4ded61d0e15b52c1c8a4"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/pkg/stdcopy",
+			"Comment": "v1.4.1-12113-g16e6211",
+			"Rev": "16e6211cf7ffcdaae11e4ded61d0e15b52c1c8a4"
+		},
+		{
+			"ImportPath": "github.com/docker/docker/pkg/system",
+			"Comment": "v1.4.1-12113-g16e6211",
+			"Rev": "16e6211cf7ffcdaae11e4ded61d0e15b52c1c8a4"
+		},
+		{
+			"ImportPath": "github.com/docker/go-units",
+			"Comment": "v0.3.0",
+			"Rev": "5d2041e26a699eaca682e2ea41c8f891e1060444"
+		},
+		{
+			"ImportPath": "github.com/fsouza/go-dockerclient",
+			"Rev": "3134ad4ea8f8a04974cde3ef3958e265c605b0c1"
+		},
+		{
+			"ImportPath": "github.com/hashicorp/go-cleanhttp",
+			"Rev": "ad28ea4487f05916463e2423a55166280e8254b5"
+		},
+		{
+			"ImportPath": "github.com/jtolds/gls",
+			"Rev": "9a4a02dbe491bef4bab3c24fd9f3087d6c4c6690"
+		},
+		{
+			"ImportPath": "github.com/kelseyhightower/envconfig",
+			"Comment": "v1.3.0-3-g8bf4bbf",
+			"Rev": "8bf4bbfc795e2c7c8a5ea47b707453ed019e2ad4"
+		},
+		{
+			"ImportPath": "github.com/opencontainers/runc/libcontainer/user",
+			"Comment": "v0.1.1-93-gc6a791b",
+			"Rev": "c6a791bef906b0dfdf81e85b840bec475b8ec75e"
+		},
+		{
+			"ImportPath": "github.com/pquerna/ffjson/fflib/v1",
+			"Rev": "f60b597ded7e7542b36fe20999dfd48166abd5ae"
+		},
+		{
+			"ImportPath": "github.com/pquerna/ffjson/fflib/v1/internal",
+			"Rev": "f60b597ded7e7542b36fe20999dfd48166abd5ae"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/assertions",
+			"Comment": "1.5.0-406-gedb6e29",
+			"Rev": "edb6e295a22c57a2aa353b2f0729b6eff9f9f4b7"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/assertions/internal/oglematchers",
+			"Comment": "1.5.0-406-gedb6e29",
+			"Rev": "edb6e295a22c57a2aa353b2f0729b6eff9f9f4b7"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/goconvey/convey",
+			"Comment": "1.6.2-17-g3bd662e",
+			"Rev": "3bd662eac601ad6436e64776af2e112069eb2edc"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/goconvey/convey/gotest",
+			"Comment": "1.6.2-17-g3bd662e",
+			"Rev": "3bd662eac601ad6436e64776af2e112069eb2edc"
+		},
+		{
+			"ImportPath": "github.com/smartystreets/goconvey/convey/reporting",
+			"Comment": "1.6.2-17-g3bd662e",
+			"Rev": "3bd662eac601ad6436e64776af2e112069eb2edc"
+		},
+		{
+			"ImportPath": "golang.org/x/crypto/ssh/terminal",
+			"Rev": "4428aee3e5957ee2252b9c7a17460e5147363b4b"
+		},
+		{
+			"ImportPath": "golang.org/x/net/context",
+			"Rev": "1c05540f6879653db88113bc4a2b70aec4bd491f"
+		},
+		{
+			"ImportPath": "golang.org/x/sys/unix",
+			"Rev": "002cbb5f952456d0c50e0d2aff17ea5eca716979"
+		},
+		{
+			"ImportPath": "gopkg.in/jarcoal/httpmock.v1",
+			"Rev": "5bb0e54a2c1b7c8cbfd5a5c4d0a50435e142ecc1"
+		},
+		{
+			"ImportPath": "gopkg.in/relistan/rubberneck.v1",
+			"Comment": "v1.0.1",
+			"Rev": "4c696efeea6013864af139313af7c7492458fbbf"
+		}
+	]
+}

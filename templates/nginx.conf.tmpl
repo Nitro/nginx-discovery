@@ -1,0 +1,77 @@
+# NGiNX configuration for lazy rasterization proxy.
+# Relies on the ngx_http_redis, nginx-eval modules,
+# and http_stub_status modules.
+
+# THIS FILE IS AUTOMATICALLY MAINTAINED and any changes will be overwritten!
+# Last Updated: {{ now }}
+
+error_log /dev/stderr;
+pid       /tmp/nginx.pid;
+daemon	  off;
+
+worker_processes 1;
+
+events {
+	worker_connections  1024;
+}
+
+http {
+	access_log   /dev/stdout;
+
+	include	   mime.types;
+	default_type  application/octet-stream;
+
+	sendfile		   off;
+	keepalive_timeout  65;
+
+	upstream redis_servers {
+		keepalive 10;
+	
+		{{ range $server := servers }}server {{ $server }}; {{ end }}
+	}
+
+	server {
+		listen	   8010;
+		server_name  localhost;
+
+		resolver 127.0.0.1;
+
+		# Grab the filename/path and then rewrite to /proxy. Can't do the
+		# eval in this block because it can't handle a regex path.
+		location ~* /documents/(.*) {
+			set $key $1;
+
+			rewrite ^ /proxy;
+		}
+
+		# Take the $key we set, do the Redis lookup and then set $target_host
+		# as the return value. Finally, proxy_pass to the URL formed from
+		# the pieces.
+		location /proxy {
+			eval $target_host {
+				set $redis_key $key;
+				redis_pass redis_servers;
+			}
+
+			#add_header "X-Debug-Proxy" "$uri -- $key -- $target_host";
+
+			proxy_pass "http://$target_host/$key?$args";
+		}
+
+		# Used to health check the service and to report basic statistics
+		# on the current load of the proxy service.
+		location /health {
+			stub_status on;
+			access_log  off;
+			allow 10.0.0.0/8;    # Allow anyone on the private network
+			allow 172.16.0.0/12; # Allow anyone on the Docker bridge network
+			allow 127.0.0.0/8;   # Allow localhost
+			deny all;
+		}
+
+		error_page   500 502 503 504  /50x.html;
+		location = /50x.html {
+			root   html;
+		}
+	}
+}
