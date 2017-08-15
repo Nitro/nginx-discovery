@@ -27,7 +27,8 @@ http {
 	upstream redis_servers {
 		keepalive 10;
 	
-		{{ range $server := servers }}server {{ $server }}; {{ end }}
+		{{ range $server := servers }}server {{ $server }};
+		{{ end }}
 	}
 
 	server {
