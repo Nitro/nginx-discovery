@@ -79,6 +79,7 @@ func Test_UpdateNginx(t *testing.T) {
 			TemplateFile:   "templates/nginx.conf.tmpl",
 			SidecarAddress: "beowulf:31337",
 			FollowService:  "foo",
+			FollowPort:     10101,
 			NginxConf:      outFile.Name(),
 		}
 

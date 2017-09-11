@@ -24,6 +24,7 @@ import (
 type Config struct {
 	RefreshInterval time.Duration `envconfig:"REFRESH_INTERVAL" default:"5s"`
 	FollowService   string        `envconfig:"FOLLOW_SERVICE" default:"lazyraster"`
+	FollowPort      int64         `envconfig:"FOLLOW_PORT" required:"true"`
 	TemplateFile    string        `envconfig:"TEMPLATE_FILENAME" default:"templates/nginx.conf.tmpl"`
 	UpdateCommand   string        `envconfig:"UPDATE_COMMAND"`
 	ValidateCommand string        `envconfig:"VALIDATE_COMMAND"`
@@ -118,6 +119,18 @@ func UpdateNginx(config *Config) {
 	}
 }
 
+func findPortWithSvcPortNumber(ports []service.Port, config *Config) string {
+	for _, port := range ports {
+		// Short circuit on the first port that matches
+		if port.ServicePort == config.FollowPort {
+			return fmt.Sprintf("%s:%d", port.IP, port.Port)
+		}
+	}
+
+	return ""
+
+}
+
 // FetchServers will connect to Sidecar, and with a timeout, fetch and
 // parse the resulting structure. It will return a list of only the
 // server:port combinations for the queried service
@@ -145,21 +158,16 @@ func FetchServers(config *Config) ([]string, error) {
 	// fail instead because we get an ApiError instead.
 	svcs := apiServices.Services[config.FollowService]
 
-	servers := make([]string, len(svcs))
-	for i := 0; i < len(svcs); i++ {
-		// Assumes that there is only one port! This is what we
-		// expect for Nginx. Ignores all the others.
-		if len(svcs[i].Ports) < 1 {
-			log.Warnf("Got empty port list for service on hostname: %s",
-				svcs[i].Hostname,
+	var servers []string
+	for _, svc := range svcs {
+		portStr := findPortWithSvcPortNumber(svc.Ports, config)
+		if len(portStr) < 1 {
+			log.Warnf("Got no port match for service on hostname: %s",
+				svc.Hostname,
 			)
 			continue
 		}
-
-		servers[i] = fmt.Sprintf("%s:%d",
-			svcs[i].Ports[0].IP,
-			svcs[i].Ports[0].Port,
-		)
+		servers = append(servers, portStr)
 	}
 
 	// These need to be sorted for later comparison
