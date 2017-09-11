@@ -26,14 +26,14 @@ http {
 
 	upstream redis_servers {
 		keepalive 10;
-	
+
 		{{ range $server := servers }}server {{ $server }};
 		{{ end }}
 	}
 
 	server {
-		listen	   8010;
-		server_name  localhost;
+		listen	    8010;
+		server_name localhost;
 
 		resolver 127.0.0.1;
 
@@ -61,7 +61,7 @@ http {
 
 		# Used to health check the service and to report basic statistics
 		# on the current load of the proxy service.
-		location /health {
+		location ~ ^/(status|health)$ {
 			stub_status on;
 			access_log  off;
 			allow 10.0.0.0/8;    # Allow anyone on the private network
