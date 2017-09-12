@@ -21,6 +21,8 @@ import (
 	"gopkg.in/relistan/rubberneck.v1"
 )
 
+const LoopDelayInterval = 3 * time.Second
+
 type Config struct {
 	RefreshInterval time.Duration `envconfig:"REFRESH_INTERVAL" default:"5s"`
 	FollowService   string        `envconfig:"FOLLOW_SERVICE" default:"lazyraster"`
@@ -116,6 +118,7 @@ func UpdateNginx(config *Config) {
 		if err != nil {
 			log.Error(err)
 		}
+		time.Sleep(LoopDelayInterval)
 	}
 }
 
