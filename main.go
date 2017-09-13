@@ -94,6 +94,8 @@ func innerUpdate(config *Config, previousServers []string) ([]string, error) {
 		return nil, fmt.Errorf("Unable to write template: %s", err)
 	}
 
+	log.Info("Reloading Nginx config...")
+
 	previousServers = servers
 
 	err = run(config.ValidateCommand)
@@ -131,7 +133,6 @@ func findPortWithSvcPortNumber(ports []service.Port, config *Config) string {
 	}
 
 	return ""
-
 }
 
 // FetchServers will connect to Sidecar, and with a timeout, fetch and
@@ -166,6 +167,14 @@ func FetchServers(config *Config) ([]string, error) {
 		portStr := findPortWithSvcPortNumber(svc.Ports, config)
 		if len(portStr) < 1 {
 			log.Warnf("Got no port match for service on hostname: %s",
+				svc.Hostname,
+			)
+			continue
+		}
+
+		if svc.Status != 0 {
+			log.Infof("Skipping service with status %d on hostname: %s",
+				svc.Status,
 				svc.Hostname,
 			)
 			continue
