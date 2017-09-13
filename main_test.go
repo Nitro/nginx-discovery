@@ -91,7 +91,10 @@ func Test_UpdateNginx(t *testing.T) {
 	Convey("UpdateNginx()", t, func() {
 		previousServers := []string{}
 
-		outFile, _ := ioutil.TempFile("", "UpdateNginx")
+		outFile, err := ioutil.TempFile("", "UpdateNginx")
+		So(err, ShouldBeNil)
+		pidFile, err := ioutil.TempFile("", "NginxPID")
+		So(err, ShouldBeNil)
 
 		config := Config{
 			TemplateFile:   "templates/nginx.conf.tmpl",
@@ -99,6 +102,7 @@ func Test_UpdateNginx(t *testing.T) {
 			FollowService:  "foo",
 			FollowPort:     10101,
 			NginxConf:      outFile.Name(),
+			NginxPID:       pidFile.Name(),
 		}
 
 		servers := []string{

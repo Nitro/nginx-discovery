@@ -21,7 +21,9 @@ import (
 	"gopkg.in/relistan/rubberneck.v1"
 )
 
-const LoopDelayInterval = 3 * time.Second
+const (
+	LoopDelayInterval = 3 * time.Second
+)
 
 type Config struct {
 	RefreshInterval time.Duration `envconfig:"REFRESH_INTERVAL" default:"5s"`
@@ -102,6 +104,11 @@ func innerUpdate(config *Config, previousServers []string) ([]string, error) {
 	err = run(config.ValidateCommand)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to validate nginx config! (%s)", err)
+	}
+
+	if _, err := os.Stat(config.NginxPID); os.IsNotExist(err) {
+		log.Warn("Nginx is not running yet!")
+		return servers, nil
 	}
 
 	err = run(config.UpdateCommand)
