@@ -173,7 +173,7 @@ func FetchServers(config *Config) ([]string, error) {
 		}
 
 		if svc.Status != 0 {
-			log.Infof("Skipping service with status %d on hostname: %s",
+			log.Debugf("Skipping service with status %d on hostname: %s",
 				svc.Status,
 				svc.Hostname,
 			)

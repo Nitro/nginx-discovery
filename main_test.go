@@ -32,6 +32,24 @@ const (
 		                "Updated": "2017-08-14T15:30:23.451172154Z",
 		                "ProxyMode": "http",
 		                "Status": 0
+		            },
+		            {
+		                "ID": "0123456789",
+		                "Name": "foo",
+		                "Image": "gonitro/foo",
+		                "Created": "2017-08-04T18:50:09Z",
+		                "Hostname": "tolkien",
+		                "Ports": [
+		                    {
+		                        "Type": "tcp",
+		                        "Port": 42042,
+		                        "ServicePort": 10101,
+		                        "IP": "10.10.10.20"
+		                    }
+		                ],
+		                "Updated": "2017-08-14T15:30:23.451172154Z",
+		                "ProxyMode": "http",
+		                "Status": 1
 		            }
 		        ]
 		    },
@@ -133,6 +151,14 @@ func Test_UpdateNginx(t *testing.T) {
 			_, err := innerUpdate(&config, previousServers)
 			So(err, ShouldNotBeNil)
 			So(err.Error(), ShouldContainSubstring, "Unable to reload")
+		})
+
+		Convey("Does not add non-healthy servers", func() {
+			config.TemplateFile = ""
+			newServers, err := innerUpdate(&config, servers)
+
+			So(err, ShouldBeNil)
+			So(newServers, ShouldResemble, servers)
 		})
 	})
 }
