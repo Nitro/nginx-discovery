@@ -197,11 +197,11 @@ func main() {
 
 	// Set some defaults that are unpleasant to put in the struct definition
 	if len(config.UpdateCommand) < 1 {
-		config.UpdateCommand = `/nginx/nginx -c ` + config.NginxConf + ` -g "error_log /dev/fd/1;"`
+		config.UpdateCommand = "/bin/kill -HUP `cat /tmp/nginx.pid`"
 	}
 
 	if len(config.ValidateCommand) < 1 {
-		config.UpdateCommand = "/bin/kill -HUP `cat /tmp/nginx.pid`"
+		config.ValidateCommand = "/nginx/nginx -t -c " + config.NginxConf
 	}
 
 	rubberneck.Print(config)
