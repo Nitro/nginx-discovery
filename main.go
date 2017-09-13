@@ -32,6 +32,7 @@ type Config struct {
 	ValidateCommand string        `envconfig:"VALIDATE_COMMAND"`
 	SidecarAddress  string        `envconfig:"SIDECAR_ADDRESS" required:"true"`
 	NginxConf       string        `envconfig:"NGINX_CONF" default:"/nginx/nginx.conf"`
+	NginxPID        string        `envconfig:"NGINX_PID" default:"/tmp/nginx.pid"`
 }
 
 type ApiServices struct {
@@ -197,7 +198,7 @@ func main() {
 
 	// Set some defaults that are unpleasant to put in the struct definition
 	if len(config.UpdateCommand) < 1 {
-		config.UpdateCommand = "/bin/kill -HUP `cat /tmp/nginx.pid`"
+		config.UpdateCommand = "/bin/kill -HUP `cat " + config.NginxPID + "`"
 	}
 
 	if len(config.ValidateCommand) < 1 {
