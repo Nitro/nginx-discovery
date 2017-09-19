@@ -16,6 +16,7 @@ DISCOVERY_UPDATE_COMMAND              | no         |
 DISCOVERY_VALIDATE_COMMAND            | no         |
 DISCOVERY_SIDECAR_ADDRESS             | yes        |
 DISCOVERY_NGINX_CONF                  | no         | /nginx/nginx.conf
+DISCOVERY_NGINX_PID                   | no         | /tmp/nginx.pid
 
 Example configuration:
 

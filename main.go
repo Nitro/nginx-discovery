@@ -21,7 +21,9 @@ import (
 	"gopkg.in/relistan/rubberneck.v1"
 )
 
-const LoopDelayInterval = 3 * time.Second
+const (
+	LoopDelayInterval = 3 * time.Second
+)
 
 type Config struct {
 	RefreshInterval time.Duration `envconfig:"REFRESH_INTERVAL" default:"5s"`
@@ -32,6 +34,7 @@ type Config struct {
 	ValidateCommand string        `envconfig:"VALIDATE_COMMAND"`
 	SidecarAddress  string        `envconfig:"SIDECAR_ADDRESS" required:"true"`
 	NginxConf       string        `envconfig:"NGINX_CONF" default:"/nginx/nginx.conf"`
+	NginxPID        string        `envconfig:"NGINX_PID" default:"/tmp/nginx.pid"`
 }
 
 type ApiServices struct {
@@ -94,11 +97,18 @@ func innerUpdate(config *Config, previousServers []string) ([]string, error) {
 		return nil, fmt.Errorf("Unable to write template: %s", err)
 	}
 
+	log.Info("Reloading Nginx config...")
+
 	previousServers = servers
 
 	err = run(config.ValidateCommand)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to validate nginx config! (%s)", err)
+	}
+
+	if _, err := os.Stat(config.NginxPID); os.IsNotExist(err) {
+		log.Warn("Nginx is not running yet!")
+		return servers, nil
 	}
 
 	err = run(config.UpdateCommand)
@@ -131,7 +141,6 @@ func findPortWithSvcPortNumber(ports []service.Port, config *Config) string {
 	}
 
 	return ""
-
 }
 
 // FetchServers will connect to Sidecar, and with a timeout, fetch and
@@ -170,6 +179,14 @@ func FetchServers(config *Config) ([]string, error) {
 			)
 			continue
 		}
+
+		if svc.Status != 0 {
+			log.Debugf("Skipping service with status %d on hostname: %s",
+				svc.Status,
+				svc.Hostname,
+			)
+			continue
+		}
 		servers = append(servers, portStr)
 	}
 
@@ -188,11 +205,11 @@ func main() {
 
 	// Set some defaults that are unpleasant to put in the struct definition
 	if len(config.UpdateCommand) < 1 {
-		config.UpdateCommand = `/nginx/nginx -c ` + config.NginxConf + ` -g "error_log /dev/fd/1;"`
+		config.UpdateCommand = "/bin/kill -HUP `cat " + config.NginxPID + "`"
 	}
 
 	if len(config.ValidateCommand) < 1 {
-		config.UpdateCommand = "/bin/kill -HUP `cat /tmp/nginx.pid`"
+		config.ValidateCommand = "/nginx/nginx -t -c " + config.NginxConf
 	}
 
 	rubberneck.Print(config)
