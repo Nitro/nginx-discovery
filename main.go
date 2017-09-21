@@ -87,7 +87,7 @@ func innerUpdate(config *Config, previousServers []string) ([]string, error) {
 		return servers, nil
 	}
 
-	output, err := os.OpenFile(config.NginxConf, os.O_RDWR|os.O_CREATE, 0644)
+	output, err := os.OpenFile(config.NginxConf, os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0644)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to open output file for writing: %s", err)
 	}
