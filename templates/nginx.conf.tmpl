@@ -56,7 +56,7 @@ http {
 
 			#add_header "X-Debug-Proxy" "$uri -- $key -- $target_host";
 
-			proxy_pass "http://$target_host/$key?$args";
+			proxy_pass "http://$target_host/documents/$key?$args";
 		}
 
 		# Used to health check the service and to report basic statistics
