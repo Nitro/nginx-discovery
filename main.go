@@ -92,6 +92,12 @@ func innerUpdate(config *Config, previousServers []string) ([]string, error) {
 		return nil, fmt.Errorf("Unable to open output file for writing: %s", err)
 	}
 
+	// While this is not strictly necessary, it seems that O_TRUNC does not always work
+	err = output.Truncate(0)
+	if err != nil {
+		return nil, fmt.Errorf("Can't truncate file: %s", err)
+	}
+
 	err = WriteTemplate(config, servers, output)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to write template: %s", err)
