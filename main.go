@@ -103,6 +103,8 @@ func innerUpdate(config *Config, previousServers []string) ([]string, error) {
 		return nil, fmt.Errorf("Unable to write template: %s", err)
 	}
 
+	output.Close()
+
 	log.Info("Reloading Nginx config...")
 
 	previousServers = servers
