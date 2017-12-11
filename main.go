@@ -156,7 +156,7 @@ func findPortWithSvcPortNumber(ports []service.Port, config *Config) string {
 // server:port combinations for the queried service
 func FetchServers(config *Config) ([]string, error) {
 	client := &http.Client{Timeout: config.RefreshInterval * 2}
-	url := "http://" + config.SidecarAddress + "/services/" + config.FollowService + ".json"
+	url := "http://" + config.SidecarAddress + "/api/services/" + config.FollowService + ".json"
 
 	resp, err := client.Get(url)
 	if err != nil {
