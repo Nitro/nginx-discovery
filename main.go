@@ -107,8 +107,6 @@ func innerUpdate(config *Config, previousServers []string) ([]string, error) {
 
 	log.Info("Reloading Nginx config...")
 
-	previousServers = servers
-
 	err = run(config.ValidateCommand)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to validate nginx config! (%s)", err)
@@ -123,6 +121,8 @@ func innerUpdate(config *Config, previousServers []string) ([]string, error) {
 	if err != nil {
 		return nil, fmt.Errorf("Unable to reload nginx config! (%s)", err)
 	}
+
+	previousServers = servers
 
 	return servers, nil
 }
