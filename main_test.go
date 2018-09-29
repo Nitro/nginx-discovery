@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"io/ioutil"
+	"net/http"
 	"os"
 	"testing"
 
@@ -89,6 +90,7 @@ func Test_WriteTemplate(t *testing.T) {
 
 func Test_UpdateNginx(t *testing.T) {
 	Convey("UpdateNginx()", t, func() {
+		httpmock.Reset()
 		previousServers := []string{}
 
 		outFile, err := ioutil.TempFile("", "UpdateNginx")
@@ -109,13 +111,15 @@ func Test_UpdateNginx(t *testing.T) {
 			"10.10.10.10:26858",
 		}
 
-		httpmock.RegisterResponder("GET", "http://beowulf:31337/services/foo.json",
+		httpmock.RegisterResponder("GET", "http://beowulf:31337/api/services/foo.json",
 			httpmock.NewStringResponder(
 				200, ValidResponse,
 			),
 		)
 
-		httpmock.Activate()
+		client := &http.Client{}
+
+		httpmock.ActivateNonDefault(client)
 
 		Reset(func() {
 			httpmock.Reset()
@@ -123,7 +127,7 @@ func Test_UpdateNginx(t *testing.T) {
 		})
 
 		Convey("Writes a template when the servers changed", func() {
-			newServers, err := innerUpdate(&config, previousServers)
+			newServers, err := innerUpdate(&config, previousServers, client)
 
 			stat, _ := outFile.Stat()
 			So(err, ShouldBeNil)
@@ -132,7 +136,7 @@ func Test_UpdateNginx(t *testing.T) {
 		})
 
 		Convey("Does not write a template when the servers are the same", func() {
-			newServers, err := innerUpdate(&config, servers)
+			newServers, err := innerUpdate(&config, servers, client)
 
 			stat, _ := outFile.Stat()
 			So(err, ShouldBeNil)
@@ -143,7 +147,7 @@ func Test_UpdateNginx(t *testing.T) {
 		Convey("Bubbles up errors in validation", func() {
 			config.ValidateCommand = "false"
 
-			_, err := innerUpdate(&config, previousServers)
+			_, err := innerUpdate(&config, previousServers, client)
 			So(err, ShouldNotBeNil)
 			So(err.Error(), ShouldContainSubstring, "Unable to validate")
 		})
@@ -152,17 +156,39 @@ func Test_UpdateNginx(t *testing.T) {
 			config.ValidateCommand = "true"
 			config.UpdateCommand = "false"
 
-			_, err := innerUpdate(&config, previousServers)
+			_, err := innerUpdate(&config, previousServers, client)
 			So(err, ShouldNotBeNil)
 			So(err.Error(), ShouldContainSubstring, "Unable to reload")
 		})
 
 		Convey("Does not add non-healthy servers", func() {
 			config.TemplateFile = ""
-			newServers, err := innerUpdate(&config, servers)
+			newServers, err := innerUpdate(&config, servers, client)
 
 			So(err, ShouldBeNil)
 			So(newServers, ShouldResemble, servers)
+		})
+
+		Convey("Does not blow up when FetchServers has no services", func() {
+			httpmock.Reset()
+
+			httpmock.RegisterResponder("GET", "http://beowulf:31337/api/services/foo.json",
+				httpmock.NewStringResponder(
+					200, "null",
+				),
+			)
+
+			newServers, err := innerUpdate(&config, servers, client)
+
+			So(err, ShouldBeNil)
+			So(newServers, ShouldBeNil)
+		})
+
+		Convey("Does update when previousServers was nil and FetchServers returns servers", func() {
+			newServers, err := innerUpdate(&config, nil, client)
+
+			So(err, ShouldBeNil)
+			So(newServers, ShouldResemble, []string{"10.10.10.10:26858"})
 		})
 	})
 }

@@ -77,8 +77,8 @@ func run(command string) error {
 	return err
 }
 
-func innerUpdate(config *Config, previousServers []string) ([]string, error) {
-	servers, err := FetchServers(config)
+func innerUpdate(config *Config, previousServers []string, client *http.Client) ([]string, error) {
+	servers, err := FetchServers(config, client)
 	if err != nil {
 		return nil, fmt.Errorf("Unable to fetch updated server list! (%s)", err)
 	}
@@ -114,7 +114,7 @@ func innerUpdate(config *Config, previousServers []string) ([]string, error) {
 
 	if _, err := os.Stat(config.NginxPID); os.IsNotExist(err) {
 		log.Warn("Nginx is not running yet!")
-		return servers, nil
+		return nil, nil
 	}
 
 	err = run(config.UpdateCommand)
@@ -122,17 +122,16 @@ func innerUpdate(config *Config, previousServers []string) ([]string, error) {
 		return nil, fmt.Errorf("Unable to reload nginx config! (%s)", err)
 	}
 
-	previousServers = servers
-
 	return servers, nil
 }
 
 func UpdateNginx(config *Config) {
 	var previousServers []string
 	var err error
+	client := &http.Client{Timeout: config.RefreshInterval * 2}
 
 	for {
-		previousServers, err = innerUpdate(config, previousServers)
+		previousServers, err = innerUpdate(config, previousServers, client)
 		if err != nil {
 			log.Error(err)
 		}
@@ -154,8 +153,7 @@ func findPortWithSvcPortNumber(ports []service.Port, config *Config) string {
 // FetchServers will connect to Sidecar, and with a timeout, fetch and
 // parse the resulting structure. It will return a list of only the
 // server:port combinations for the queried service
-func FetchServers(config *Config) ([]string, error) {
-	client := &http.Client{Timeout: config.RefreshInterval * 2}
+func FetchServers(config *Config, client *http.Client) ([]string, error) {
 	url := "http://" + config.SidecarAddress + "/api/services/" + config.FollowService + ".json"
 
 	resp, err := client.Get(url)
